@@ -40,6 +40,7 @@ public class Tooltip extends AbstractConfigurationObject {
 	private Number hideDelay;
 	private String pointFormat;
 	private String _fn_pointFormatter;
+	private String _fn_positioner;
 	private Boolean shadow;
 	private Shape shape;
 	private Boolean shared;
@@ -343,6 +344,14 @@ public class Tooltip extends AbstractConfigurationObject {
 		this._fn_pointFormatter = _fn_pointFormatter;
 	}
 
+	public String getPositioner() {
+		return _fn_positioner;
+	}
+
+	public void setPositioner(String _fn_positioner) {
+		this._fn_positioner = _fn_positioner;
+	}
+
 	/**
 	 * @see #setShadow(Boolean)
 	 */
@@ -384,11 +393,20 @@ public class Tooltip extends AbstractConfigurationObject {
 	}
 
 	/**
+	 * <p>
 	 * When the tooltip is shared, the entire plot area will capture mouse
 	 * movement or touch events. Tooltip texts for series types with ordered
 	 * data (not pie, scatter, flags etc) will be shown in a single bubble. This
 	 * is recommended for single series charts and for tablet/mobile optimized
 	 * charts.
+	 * </p>
+	 * 
+	 * <p>
+	 * See also the experimental implementation for <a href=
+	 * "http://jsfiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/highcharts/studies/tooltip-split/"
+	 * >tooltip.split</a>, that is better suited for charts with many series,
+	 * especially line-type series.
+	 * </p>
 	 * <p>
 	 * Defaults to: false
 	 */

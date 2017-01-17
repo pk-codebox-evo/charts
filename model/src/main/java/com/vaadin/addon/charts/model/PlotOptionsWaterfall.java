@@ -21,6 +21,7 @@ import com.vaadin.addon.charts.model.style.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.time.Instant;
 import com.vaadin.addon.charts.util.Util;
 /**
  * Options for the waterfall series type.
@@ -29,6 +30,7 @@ public class PlotOptionsWaterfall extends ColumnOptions {
 
 	private Boolean allowPointSelect;
 	private Boolean animation;
+	private Number animationLimit;
 	private Color borderColor;
 	private Number borderRadius;
 	private Number borderWidth;
@@ -131,6 +133,24 @@ public class PlotOptionsWaterfall extends ColumnOptions {
 	 */
 	public void setAnimation(Boolean animation) {
 		this.animation = animation;
+	}
+
+	/**
+	 * @see #setAnimationLimit(Number)
+	 */
+	public Number getAnimationLimit() {
+		return animationLimit;
+	}
+
+	/**
+	 * For some series, there is a limit that shuts down initial animation by
+	 * default when the total number of points in the chart is too high. For
+	 * example, for a column chart and its derivatives, animation doesn't run if
+	 * there is more than 250 points totally. To disable this cap, set
+	 * <code>animationLimit</code> to <code>Infinity</code>.
+	 */
+	public void setAnimationLimit(Number animationLimit) {
+		this.animationLimit = animationLimit;
 	}
 
 	/**
@@ -608,10 +628,12 @@ public class PlotOptionsWaterfall extends ColumnOptions {
 
 	/**
 	 * On datetime series, this allows for setting the <a
-	 * href="plotOptions.series.pointInterval">pointInterval</a> to the two
-	 * irregular time units, <code>month</code> and <code>year</code>. Combine
-	 * it with <code>pointInterval</code> to draw quarters, 6 months, 10 years
-	 * etc.
+	 * href="plotOptions.series.pointInterval">pointInterval</a> to irregular
+	 * time units, <code>day</code>, <code>month</code> and <code>year</code>. A
+	 * day is usually the same as 24 hours, but pointIntervalUnit also takes the
+	 * DST crossover into consideration when dealing with local time. Combine
+	 * this option with <code>pointInterval</code> to draw weeks, quarters, 6
+	 * months, 10 years etc.
 	 */
 	public void setPointIntervalUnit(IntervalUnit pointIntervalUnit) {
 		this.pointIntervalUnit = pointIntervalUnit;
@@ -995,9 +1017,17 @@ public class PlotOptionsWaterfall extends ColumnOptions {
 	}
 
 	/**
-	 * @see #setPointStart(Number)
+	 * @deprecated as of 4.0. Use {@link #setPointStart(Instant)}
 	 */
+	@Deprecated
 	public void setPointStart(Date date) {
 		this.pointStart = Util.toHighchartsTS(date);
+	}
+
+	/**
+	 * @see #setPointStart(Number)
+	 */
+	public void setPointStart(Instant instant) {
+		this.pointStart = Util.toHighchartsTS(instant);
 	}
 }

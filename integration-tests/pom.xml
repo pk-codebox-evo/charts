@@ -2,9 +2,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
-        <groupId>com.vaadin.addon</groupId>
+        <groupId>com.vaadin</groupId>
         <artifactId>vaadin-charts-parent</artifactId>
-        <version>3.0-SNAPSHOT</version>
+        <version>4.0-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -15,7 +15,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.vaadin.addon</groupId>
+            <groupId>com.vaadin</groupId>
             <artifactId>vaadin-charts</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -40,6 +40,32 @@
         </dependency>
 
         <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-client-compiled</artifactId>
+            <version>${vaadin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-client-compiler</artifactId>
+            <version>${vaadin.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-compatibility-server</artifactId>
+            <version>${vaadin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-compatibility-client</artifactId>
+            <version>${vaadin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-compatibility-shared</artifactId>
+            <version>${vaadin.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
             <version>0.9.10</version>
@@ -56,12 +82,6 @@
             <version>2.4</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-webapp</artifactId>
-            <version>8.1.13.v20130916</version>
-            <scope>provided</scope>
-        </dependency>
 
         <!-- Test dependencies -->
         <dependency>
@@ -117,6 +137,7 @@
                     <draftCompile>true</draftCompile>
                     <style>PRETTY</style>
                     <module>com.vaadin.addon.charts.AppWidgetSet</module>
+
 
                     <!-- Skip in default phase, we only gwt compile for tests -->
                     <!--<skip>true</skip> -->
@@ -210,15 +231,12 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.mortbay.jetty</groupId>
+                <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
                 <configuration>
-                    <connectors>
-                        <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
-                            <port>9998</port>
-                            <maxIdleTime>60000</maxIdleTime>
-                        </connector>
-                    </connectors>
+                    <httpConnector>
+                    <port>9998</port>
+                    </httpConnector>
                     <scanIntervalSeconds>1</scanIntervalSeconds>
                     <useProvidedScope>true</useProvidedScope>
                     <useTestClasspath>true</useTestClasspath>
@@ -254,7 +272,7 @@
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <configuration>
                             <systemPropertyVariables>
-                                <browsers.include>phantomjs1</browsers.include>
+                                <browsers.include>phantomjs2</browsers.include>
                             </systemPropertyVariables>
                         </configuration>
                     </plugin>
@@ -288,7 +306,7 @@
             <build>
                 <plugins>
                     <plugin>
-                        <groupId>org.mortbay.jetty</groupId>
+                        <groupId>org.eclipse.jetty</groupId>
                         <artifactId>jetty-maven-plugin</artifactId>
                         <executions>
                             <!-- start and stop jetty (running our app) when running integration

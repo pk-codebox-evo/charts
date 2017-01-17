@@ -21,9 +21,12 @@ import com.vaadin.addon.charts.model.style.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.time.Instant;
 import com.vaadin.addon.charts.util.Util;
 import com.vaadin.server.SizeWithUnit;
 import com.vaadin.server.Sizeable.Unit;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.vaadin.addon.charts.model.serializers.SizeSerializer;
 /**
  * A bubble series is a three dimensional series type where each point renders
  * an X, Y and Z value. Each points is drawn as a bubble where the position
@@ -34,6 +37,7 @@ public class PlotOptionsBubble extends AbstractPlotOptions {
 
 	private Boolean allowPointSelect;
 	private Boolean animation;
+	private Number animationLimit;
 	private Color color;
 	private Number cropThreshold;
 	private Cursor cursor;
@@ -67,7 +71,9 @@ public class PlotOptionsBubble extends AbstractPlotOptions {
 	private Number zThreshold;
 	private String zoneAxis;
 	private ArrayList<Zones> zones;
+	@JsonSerialize(using = SizeSerializer.class)
 	private String minSize;
+	@JsonSerialize(using = SizeSerializer.class)
 	private String maxSize;
 
 	public PlotOptionsBubble() {
@@ -129,6 +135,24 @@ public class PlotOptionsBubble extends AbstractPlotOptions {
 	 */
 	public void setAnimation(Boolean animation) {
 		this.animation = animation;
+	}
+
+	/**
+	 * @see #setAnimationLimit(Number)
+	 */
+	public Number getAnimationLimit() {
+		return animationLimit;
+	}
+
+	/**
+	 * For some series, there is a limit that shuts down initial animation by
+	 * default when the total number of points in the chart is too high. For
+	 * example, for a column chart and its derivatives, animation doesn't run if
+	 * there is more than 250 points totally. To disable this cap, set
+	 * <code>animationLimit</code> to <code>Infinity</code>.
+	 */
+	public void setAnimationLimit(Number animationLimit) {
+		this.animationLimit = animationLimit;
 	}
 
 	/**
@@ -432,10 +456,12 @@ public class PlotOptionsBubble extends AbstractPlotOptions {
 
 	/**
 	 * On datetime series, this allows for setting the <a
-	 * href="plotOptions.series.pointInterval">pointInterval</a> to the two
-	 * irregular time units, <code>month</code> and <code>year</code>. Combine
-	 * it with <code>pointInterval</code> to draw quarters, 6 months, 10 years
-	 * etc.
+	 * href="plotOptions.series.pointInterval">pointInterval</a> to irregular
+	 * time units, <code>day</code>, <code>month</code> and <code>year</code>. A
+	 * day is usually the same as 24 hours, but pointIntervalUnit also takes the
+	 * DST crossover into consideration when dealing with local time. Combine
+	 * this option with <code>pointInterval</code> to draw weeks, quarters, 6
+	 * months, 10 years etc.
 	 */
 	public void setPointIntervalUnit(IntervalUnit pointIntervalUnit) {
 		this.pointIntervalUnit = pointIntervalUnit;
@@ -806,10 +832,18 @@ public class PlotOptionsBubble extends AbstractPlotOptions {
 	}
 
 	/**
-	 * @see #setPointStart(Number)
+	 * @deprecated as of 4.0. Use {@link #setPointStart(Instant)}
 	 */
+	@Deprecated
 	public void setPointStart(Date date) {
 		this.pointStart = Util.toHighchartsTS(date);
+	}
+
+	/**
+	 * @see #setPointStart(Number)
+	 */
+	public void setPointStart(Instant instant) {
+		this.pointStart = Util.toHighchartsTS(instant);
 	}
 
 	/**

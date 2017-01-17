@@ -23,8 +23,6 @@ import com.vaadin.addon.charts.model.PlotOptionsSeries;
 import com.vaadin.addon.charts.model.XAxis;
 import com.vaadin.addon.charts.model.YAxis;
 import com.vaadin.addon.charts.model.style.SolidColor;
-import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
@@ -105,6 +103,8 @@ public class ClickToAddPoint extends AbstractVaadinChartExample {
             }
         });
         VerticalLayout verticalLayout = new VerticalLayout();
+        verticalLayout.setSpacing(false);
+        verticalLayout.setMargin(false);
         verticalLayout.addComponent(chart);
         verticalLayout.addComponent(lastAction);
         verticalLayout.addComponent(eventDetails);
@@ -132,14 +132,10 @@ public class ClickToAddPoint extends AbstractVaadinChartExample {
     protected void setup() {
         super.setup();
         final CheckBox checkbox = new CheckBox("Animate additions");
-        checkbox.setImmediate(true);
         checkbox.setValue(true);
-        checkbox.addValueChangeListener(new ValueChangeListener() {
-            @Override
-            public void valueChange(ValueChangeEvent event) {
+        checkbox.addValueChangeListener(event -> {
                 chart.getConfiguration().getChart()
                         .setAnimation(checkbox.getValue());
-            }
         });
         addComponentAsFirst(checkbox);
     }

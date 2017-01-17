@@ -12,16 +12,12 @@ import com.vaadin.addon.charts.model.Marker;
 import com.vaadin.addon.charts.model.style.Color;
 import com.vaadin.addon.charts.model.style.SolidColor;
 import com.vaadin.addon.charts.themes.ValoLightTheme;
-import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.ColorPicker;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Slider;
-import com.vaadin.ui.components.colorpicker.ColorChangeEvent;
-import com.vaadin.ui.components.colorpicker.ColorChangeListener;
 
 @SuppressWarnings("serial")
 public class ModifyOnePoint extends AbstractVaadinChartExample {
@@ -90,15 +86,11 @@ public class ModifyOnePoint extends AbstractVaadinChartExample {
         sliderX.setResolution(1);
         sliderX.setValue(4d);
         sliderX.setCaption("X");
-        sliderX.addValueChangeListener(new ValueChangeListener() {
-            @Override
-            public void valueChange(ValueChangeEvent event) {
+        sliderX.addValueChangeListener(event -> {
                 dataSeriesItem.setX(sliderX.getValue());
                 series.update(dataSeriesItem);
-            }
         });
         sliderX.setWidth("200px");
-        sliderX.setImmediate(true);
         formLayout.addComponent(sliderX);
 
         final Slider sliderY = new Slider();
@@ -107,30 +99,22 @@ public class ModifyOnePoint extends AbstractVaadinChartExample {
         sliderY.setResolution(1);
         sliderY.setValue(4d);
         sliderY.setCaption("Y");
-        sliderY.addValueChangeListener(new ValueChangeListener() {
-            @Override
-            public void valueChange(ValueChangeEvent event) {
+        sliderY.addValueChangeListener(event -> {
                 dataSeriesItem.setY(sliderY.getValue());
                 updateItemInChart();
-            }
         });
         sliderY.setWidth("200px");
-        sliderY.setImmediate(true);
         formLayout.addComponent(sliderY);
 
         final ColorPicker colorPicker = new ColorPicker();
-        colorPicker.setColor(new com.vaadin.shared.ui.colorpicker.Color(255, 0,
+        colorPicker.setValue(new com.vaadin.shared.ui.colorpicker.Color(255, 0,
                 0));
         colorPicker.setCaption("Marker color");
-        colorPicker.setImmediate(true);
-        colorPicker.addColorChangeListener(new ColorChangeListener() {
-            @Override
-            public void colorChanged(ColorChangeEvent event) {
-                dataSeriesItem.getMarker().setFillColor(
-                        new SolidColor(event.getColor().getCSS()));
-                updateItemInChart();
-            }
 
+        colorPicker.addValueChangeListener(event -> {
+                dataSeriesItem.getMarker().setFillColor(
+                    new SolidColor(event.getValue().getCSS()));
+                updateItemInChart();
         });
         formLayout.addComponent(colorPicker);
 
@@ -142,9 +126,8 @@ public class ModifyOnePoint extends AbstractVaadinChartExample {
                 sliderX.setValue(r.nextDouble() * 5 + 3);
                 sliderY.setValue(r.nextDouble() * 10);
                 colorPicker
-                        .setColor(new com.vaadin.shared.ui.colorpicker.Color(r
+                        .setValue(new com.vaadin.shared.ui.colorpicker.Color(r
                                 .nextInt(255), r.nextInt(255), r.nextInt(255)));
-                colorPicker.fireColorChanged();
             }
         });
         c.setId("random");

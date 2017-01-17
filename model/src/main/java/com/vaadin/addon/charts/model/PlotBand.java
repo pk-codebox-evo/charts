@@ -20,7 +20,10 @@ package com.vaadin.addon.charts.model;
 import com.vaadin.addon.charts.model.style.Color;
 import com.vaadin.server.SizeWithUnit;
 import com.vaadin.server.Sizeable.Unit;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.vaadin.addon.charts.model.serializers.SizeSerializer;
 import java.util.Date;
+import java.time.Instant;
 import com.vaadin.addon.charts.util.Util;
 /**
  * An array of objects defining plot bands on the Y axis.
@@ -32,9 +35,12 @@ public class PlotBand extends AbstractConfigurationObject {
 	private Color color;
 	private Number from;
 	private String id;
+	@JsonSerialize(using = SizeSerializer.class)
 	private String innerRadius;
 	private Label label;
+	@JsonSerialize(using = SizeSerializer.class)
 	private String outerRadius;
+	@JsonSerialize(using = SizeSerializer.class)
 	private String thickness;
 	private Number to;
 	private Number zIndex;
@@ -395,17 +401,33 @@ public class PlotBand extends AbstractConfigurationObject {
 	}
 
 	/**
-	 * @see #setFrom(Number)
+	 * @deprecated as of 4.0. Use {@link #setPointStart(Instant)}
 	 */
+	@Deprecated
 	public void setFrom(Date date) {
 		this.from = Util.toHighchartsTS(date);
 	}
 
 	/**
-	 * @see #setTo(Number)
+	 * @see #setFrom(Number)
 	 */
+	public void setFrom(Instant instant) {
+		this.from = Util.toHighchartsTS(instant);
+	}
+
+	/**
+	 * @deprecated as of 4.0. Use {@link #setPointStart(Instant)}
+	 */
+	@Deprecated
 	public void setTo(Date date) {
 		this.to = Util.toHighchartsTS(date);
+	}
+
+	/**
+	 * @see #setTo(Number)
+	 */
+	public void setTo(Instant instant) {
+		this.to = Util.toHighchartsTS(instant);
 	}
 
 	public PlotBand(Number from, Number to, Color color) {

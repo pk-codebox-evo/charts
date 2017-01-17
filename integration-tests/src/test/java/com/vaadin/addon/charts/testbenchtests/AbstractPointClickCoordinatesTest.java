@@ -1,13 +1,13 @@
 package com.vaadin.addon.charts.testbenchtests;
 
-import com.vaadin.testbench.By;
-import com.vaadin.testbench.elements.LabelElement;
-import com.vaadin.testbench.elements.VerticalLayoutElement;
-import com.vaadin.testbench.parallel.Browser;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+
+import com.vaadin.testbench.By;
+import com.vaadin.testbench.elements.LabelElement;
+import com.vaadin.testbench.elements.VerticalLayoutElement;
 
 public abstract class AbstractPointClickCoordinatesTest
         extends AbstractParallelTest {
@@ -30,7 +30,6 @@ public abstract class AbstractPointClickCoordinatesTest
 
     @Test
     public void pointClick_occured_correctAbsoluteCoordinates() {
-        skipBrowser("Uses VML for rendering, selectors won't work",Browser.IE8);
         openTestUI();
 
         clickPoint();
@@ -40,7 +39,6 @@ public abstract class AbstractPointClickCoordinatesTest
 
     @Test
     public void chartClick_occured_correctAbsoluteCoordinates() {
-        skipBrowser("Uses VML for rendering, selectors won't work",Browser.IE8);
         openTestUI();
 
         clickChart();
@@ -88,13 +86,13 @@ public abstract class AbstractPointClickCoordinatesTest
         new Actions(driver)
                 .moveToElement(layout, expectedPointX, expectedPointY).click()
                 .build().perform();
-        getTestBenchCommandExecutor().waitForVaadin();
+        waitForVaadin();
     }
 
     private void clickChart() {
         WebElement chart = findElement(By.className("vaadin-chart"));
         new Actions(driver).moveToElement(chart, expectedChartX, expectedChartY)
                 .click().build().perform();
-        getTestBenchCommandExecutor().waitForVaadin();
+        waitForVaadin();
     }
 }

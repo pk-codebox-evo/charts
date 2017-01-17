@@ -4,68 +4,66 @@ import java.util.Locale;
 
 import com.vaadin.addon.charts.model.style.Color;
 import com.vaadin.addon.charts.model.style.SolidColor;
-import com.vaadin.data.util.converter.AbstractStringToNumberConverter;
-import com.vaadin.data.util.converter.Converter;
+import com.vaadin.data.Converter;
+import com.vaadin.data.Result;
+import com.vaadin.data.ValueContext;
+import com.vaadin.data.converter.AbstractStringToNumberConverter;
 
 public class ChartDesignFormatter {
 
     private static boolean initialized;
 
     public static void init() {
+
         if (!initialized) {
-            DesignAttributeHandler.getFormatter().addConverter(
+            DesignAttributeHandler.getFormatter().addConverter(Number.class,
                     new NumberToStringConverter());
-            DesignAttributeHandler.getFormatter().addConverter(
+            DesignAttributeHandler.getFormatter().addConverter(Color.class,
                     new StringToColorConverter());
             initialized = true;
         }
     }
 
-    private static class NumberToStringConverter extends
-            AbstractStringToNumberConverter<Number> {
+    private static class NumberToStringConverter
+            extends AbstractStringToNumberConverter<Number> {
 
-        @Override
-        public Number convertToModel(String value,
-                Class<? extends Number> targetType, Locale locale)
-                throws ConversionException {
-            return convertToNumber(value, targetType, locale);
+        public NumberToStringConverter() {
+            super("");
+        }
+
+        public NumberToStringConverter(String error) {
+            super(error);
         }
 
         @Override
-        public Class<Number> getModelType() {
-            return Number.class;
+        public Result<Number> convertToModel(String value,
+                ValueContext context) {
+            return convertToNumber(value, getLocaleFromContext(context));
         }
+
     }
 
-    private static class StringToColorConverter implements
-            Converter<String, Color> {
+    private static Locale getLocaleFromContext(ValueContext context) {
+        return context.getLocale().isPresent() ? context.getLocale().get()
+                : Locale.getDefault();
+    }
+
+    private static class StringToColorConverter
+            implements Converter<String, Color> {
 
         @Override
-        public Color convertToModel(String value,
-                Class<? extends Color> targetType, Locale locale)
-                throws com.vaadin.data.util.converter.Converter.ConversionException {
-            return new SolidColor(value);
+        public Result<Color> convertToModel(String value,
+                ValueContext context) {
+            Color color = new SolidColor(value);
+            return Result.ok(color);
         }
 
         @Override
-        public String convertToPresentation(Color value,
-                Class<? extends String> targetType, Locale locale)
-                throws com.vaadin.data.util.converter.Converter.ConversionException {
+        public String convertToPresentation(Color value, ValueContext context) {
             if (value instanceof SolidColor) {
                 return value.toString();
             }
             return null;
         }
-
-        @Override
-        public Class<Color> getModelType() {
-            return Color.class;
-        }
-
-        @Override
-        public Class<String> getPresentationType() {
-            return String.class;
-        }
-
     }
 }

@@ -26,6 +26,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
 
+import org.jsoup.nodes.Element;
+
 import com.vaadin.addon.charts.declarative.ChartDesignReader;
 import com.vaadin.addon.charts.declarative.ChartDesignWriter;
 import com.vaadin.addon.charts.events.AbstractSeriesEvent;
@@ -53,11 +55,10 @@ import com.vaadin.addon.charts.shared.ChartServerRpc;
 import com.vaadin.addon.charts.shared.ChartState;
 import com.vaadin.addon.charts.shared.DrilldownEventDetails;
 import com.vaadin.addon.charts.shared.MouseEventDetails;
+import com.vaadin.shared.Registration;
 import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.declarative.DesignContext;
 import com.vaadin.util.ReflectTools;
-
-import org.jsoup.nodes.Element;
 
 /**
  * Chart is a Vaadin component that is used to visualize data.
@@ -166,6 +167,11 @@ public class Chart extends AbstractComponent {
             chart.getRpcProxy(ChartClientRpc.class).sliceItem(
                 getSeriesIndex(event), event.getIndex(), event.isSliced(),
                 event.isRedraw(), event.isAnimation());
+        }
+
+        @Override
+        public void resetZoom(boolean redraw, boolean animate) {
+            chart.getRpcProxy(ChartClientRpc.class).resetZoom(redraw, animate);
         }
 
         @Override
@@ -564,16 +570,25 @@ public class Chart extends AbstractComponent {
         drawChart(getConfiguration());
     }
 
+
+
+
+
+
     /**
      * Adds chart click listener, which will be notified of clicks on the chart
      * area
      *
      * @param listener
      */
-    public void addChartClickListener(ChartClickListener listener) {
+    public Registration addChartClickListener(ChartClickListener listener) {
         this.addListener(
             ChartConnector.CHART_CLICK_EVENT_ID, ChartClickEvent.class,
             listener, chartClickMethod);
+
+        return () -> removeListener(
+                ChartConnector.CHART_CLICK_EVENT_ID, ChartClickEvent.class,
+                listener);
     }
 
     /**
@@ -582,6 +597,7 @@ public class Chart extends AbstractComponent {
      * @see #addChartClickListener(ChartClickListener)
      * @param listener
      */
+    @Deprecated
     public void removeChartClickListener(ChartClickListener listener) {
         this.removeListener(
             ChartConnector.CHART_CLICK_EVENT_ID, ChartClickEvent.class,
@@ -594,10 +610,14 @@ public class Chart extends AbstractComponent {
      *
      * @param listener
      */
-    public void addChartDrillupListener(ChartDrillupListener listener) {
+    public Registration addChartDrillupListener(ChartDrillupListener listener) {
         this.addListener(
             ChartConnector.CHART_DRILLUP_EVENT_ID, ChartDrillupEvent.class,
             listener, chartDrillupMethod);
+
+        return () -> removeListener(
+                ChartConnector.CHART_DRILLUP_EVENT_ID, ChartDrillupEvent.class,
+                listener);
     }
 
     /**
@@ -606,6 +626,7 @@ public class Chart extends AbstractComponent {
      * @see #addChartDrillupListener(ChartDrillupListener)
      * @param listener
      */
+    @Deprecated
     public void removeChartDrillupListener(ChartDrillupListener listener) {
         this.removeListener(
             ChartConnector.CHART_DRILLUP_EVENT_ID, ChartDrillupEvent.class,
@@ -618,10 +639,14 @@ public class Chart extends AbstractComponent {
      *
      * @param listener
      */
-    public void addCheckBoxClickListener(CheckboxClickListener listener) {
+    public Registration addCheckBoxClickListener(CheckboxClickListener listener) {
         this.addListener(
             ChartConnector.CHECKBOX_CLICK_EVENT_ID, CheckboxClickEvent.class,
             listener, checkboxClickMethod);
+
+        return () -> removeListener(
+                ChartConnector.CHECKBOX_CLICK_EVENT_ID, CheckboxClickEvent.class,
+                listener);
     }
 
     /**
@@ -630,6 +655,7 @@ public class Chart extends AbstractComponent {
      * @see #addCheckBoxClickListener(CheckboxClickListener)
      * @param listener
      */
+    @Deprecated
     public void removeCheckBoxClickListener(CheckboxClickListener listener) {
         this.removeListener(
             ChartConnector.CHECKBOX_CLICK_EVENT_ID, CheckboxClickEvent.class,
@@ -663,10 +689,14 @@ public class Chart extends AbstractComponent {
      *
      * @param listener
      */
-    public void addPointClickListener(PointClickListener listener) {
+    public Registration addPointClickListener(PointClickListener listener) {
         this.addListener(
             ChartConnector.POINT_CLICK_EVENT_ID, PointClickEvent.class,
             listener, pointClickMethod);
+
+        return () -> removeListener(
+                ChartConnector.POINT_CLICK_EVENT_ID, PointClickEvent.class,
+                listener);
     }
 
     /**
@@ -675,6 +705,7 @@ public class Chart extends AbstractComponent {
      * @see #addPointClickListener(PointClickListener)
      * @param listener
      */
+    @Deprecated
     public void removePointClickListener(PointClickListener listener) {
         this.removeListener(
             ChartConnector.POINT_CLICK_EVENT_ID, PointClickEvent.class,
@@ -692,10 +723,14 @@ public class Chart extends AbstractComponent {
      *
      * @param listener
      */
-    public void addChartSelectionListener(ChartSelectionListener listener) {
+    public Registration addChartSelectionListener(ChartSelectionListener listener) {
         this.addListener(
             ChartConnector.CHART_SELECTION_EVENT_ID, ChartSelectionEvent.class,
             listener, chartSelectionMethod);
+
+        return () -> removeListener(
+                ChartConnector.CHART_SELECTION_EVENT_ID, ChartSelectionEvent.class,
+                listener);
     }
 
     /**
@@ -704,6 +739,7 @@ public class Chart extends AbstractComponent {
      * @see #addChartSelectionListener(ChartSelectionListener)
      * @param listener
      */
+    @Deprecated
     public void removeChartSelectionListener(ChartSelectionListener listener) {
         this.removeListener(
             ChartConnector.CHART_SELECTION_EVENT_ID, ChartSelectionEvent.class,
@@ -721,11 +757,15 @@ public class Chart extends AbstractComponent {
      *
      * @param listener
      */
-    public void addLegendItemClickListener(LegendItemClickListener listener) {
+    public Registration addLegendItemClickListener(LegendItemClickListener listener) {
         this.addListener(
             ChartConnector.LEGENDITEM_CLICK_EVENT_ID,
             LegendItemClickEvent.class, listener, legendItemClickMethod);
         setSeriesVisibilityTogglingDisabled(true);
+
+        return () -> removeListener(
+                ChartConnector.LEGENDITEM_CLICK_EVENT_ID, LegendItemClickEvent.class,
+                listener);
     }
 
     /**
@@ -734,6 +774,7 @@ public class Chart extends AbstractComponent {
      * @see #addLegendItemClickListener(LegendItemClickListener)
      * @param listener
      */
+    @Deprecated
     public void removeLegendItemClickListener(
         LegendItemClickListener listener) {
         this.removeListener(
@@ -747,10 +788,14 @@ public class Chart extends AbstractComponent {
      *
      * @param listener
      */
-    public void addSeriesHideListener(SeriesHideListener listener) {
+    public Registration addSeriesHideListener(SeriesHideListener listener) {
         this.addListener(
             ChartConnector.HIDE_SERIES_EVENT_ID, SeriesHideEvent.class,
             listener, hideSeriesMethod);
+
+        return () -> removeListener(
+                ChartConnector.HIDE_SERIES_EVENT_ID, SeriesHideEvent.class,
+                listener);
     }
 
     /**
@@ -759,6 +804,7 @@ public class Chart extends AbstractComponent {
      * @see #addSeriesHideListener(SeriesHideListener)
      * @param listener
      */
+    @Deprecated
     public void removeSeriesHideListener(SeriesHideListener listener) {
         this.removeListener(
             ChartConnector.HIDE_SERIES_EVENT_ID, SeriesHideEvent.class,
@@ -771,10 +817,14 @@ public class Chart extends AbstractComponent {
      *
      * @param listener
      */
-    public void addSeriesShowListener(SeriesShowListener listener) {
+    public Registration addSeriesShowListener(SeriesShowListener listener) {
         this.addListener(
             ChartConnector.SHOW_SERIES_EVENT_ID, SeriesShowEvent.class,
             listener, showSeriesMethod);
+
+        return () -> removeListener(
+                ChartConnector.SHOW_SERIES_EVENT_ID, SeriesShowEvent.class,
+                listener);
     }
 
     /**
@@ -783,6 +833,7 @@ public class Chart extends AbstractComponent {
      * @see #addSeriesShowListener(SeriesShowListener)
      * @param listener
      */
+    @Deprecated
     public void removeSeriesShowListener(SeriesShowListener listener) {
         this.removeListener(
             ChartConnector.SHOW_SERIES_EVENT_ID, SeriesShowEvent.class,
@@ -795,12 +846,16 @@ public class Chart extends AbstractComponent {
      *
      * @param listener
      */
-    public void addXAxesExtremesChangeListener(
+    public Registration addXAxesExtremesChangeListener(
         XAxesExtremesChangeListener listener) {
         this.addListener(
             ChartConnector.X_AXES_EXTREMES_CHANGE_EVENT_ID,
             XAxesExtremesChangeEvent.class, listener,
             xAxesExtremesChangeMethod);
+
+        return () -> removeListener(
+                ChartConnector.X_AXES_EXTREMES_CHANGE_EVENT_ID, XAxesExtremesChangeEvent.class,
+                listener);
     }
 
     /**
@@ -809,6 +864,7 @@ public class Chart extends AbstractComponent {
      * @see #addSeriesShowListener(SeriesShowListener)
      * @param listener
      */
+    @Deprecated
     public void removeXAxesExtremesChangeListener(
         XAxesExtremesChangeListener listener) {
         this.removeListener(
@@ -822,12 +878,16 @@ public class Chart extends AbstractComponent {
      *
      * @param listener
      */
-    public void addYAxesExtremesChangeListener(
+    public Registration addYAxesExtremesChangeListener(
         YAxesExtremesChangeListener listener) {
         this.addListener(
             ChartConnector.Y_AXES_EXTREMES_CHANGE_EVENT_ID,
             YAxesExtremesChangeEvent.class, listener,
             yAxesExtremesChangeMethod);
+
+        return () -> removeListener(
+                ChartConnector.Y_AXES_EXTREMES_CHANGE_EVENT_ID, YAxesExtremesChangeEvent.class,
+                listener);
     }
 
     /**
@@ -836,6 +896,7 @@ public class Chart extends AbstractComponent {
      * @see #addSeriesShowListener(SeriesShowListener)
      * @param listener
      */
+    @Deprecated
     public void removeYAxesExtremesChangeListener(
         YAxesExtremesChangeListener listener) {
         this.removeListener(
@@ -849,10 +910,14 @@ public class Chart extends AbstractComponent {
      *
      * @param listener
      */
-    public void addPointSelectListener(PointSelectListener listener) {
+    public Registration addPointSelectListener(PointSelectListener listener) {
         this.addListener(
             ChartConnector.POINT_SELECT_EVENT_ID, PointSelectEvent.class,
             listener, pointSelectMethod);
+
+        return () -> removeListener(
+                ChartConnector.POINT_SELECT_EVENT_ID, PointSelectEvent.class,
+                listener);
     }
 
     /**
@@ -861,6 +926,7 @@ public class Chart extends AbstractComponent {
      * @see #addPointSelectListener(PointSelectListener)
      * @param listener
      */
+    @Deprecated
     public void removePointSelectListener(PointSelectListener listener) {
         this.removeListener(
             ChartConnector.POINT_SELECT_EVENT_ID, PointSelectEvent.class,
@@ -873,10 +939,14 @@ public class Chart extends AbstractComponent {
      *
      * @param listener
      */
-    public void addPointUnselectListener(PointUnselectListener listener) {
+    public Registration addPointUnselectListener(PointUnselectListener listener) {
         this.addListener(
             ChartConnector.POINT_UNSELECT_EVENT_ID, PointUnselectEvent.class,
             listener, pointUnselectMethod);
+
+        return () -> removeListener(
+                ChartConnector.POINT_UNSELECT_EVENT_ID, PointUnselectEvent.class,
+                listener);
     }
 
     /**
@@ -885,6 +955,7 @@ public class Chart extends AbstractComponent {
      * @see #addPointUnselectListener(PointUnselectListener)
      * @param listener
      */
+    @Deprecated
     public void removePointUnselectListener(PointUnselectListener listener) {
         this.removeListener(
             ChartConnector.POINT_UNSELECT_EVENT_ID, PointUnselectEvent.class,
@@ -948,7 +1019,7 @@ public class Chart extends AbstractComponent {
         Configuration configuration = getConfiguration();
         if (configuration != null) {
             ChartDesignWriter
-                .writeConfigurationToElement(configuration, design);
+                .writeConfigurationToElement(configuration, design,designContext);
         }
     }
 }

@@ -9,7 +9,6 @@ import com.vaadin.addon.charts.PointClickEvent;
 import com.vaadin.addon.charts.examples.other.TreeMapPointClick;
 import com.vaadin.testbench.By;
 import com.vaadin.testbench.elements.LabelElement;
-import com.vaadin.testbench.parallel.Browser;
 import com.vaadin.ui.Component;
 
 public class TreeMapPointClickTBTest extends AbstractParallelTest {
@@ -31,7 +30,6 @@ public class TreeMapPointClickTBTest extends AbstractParallelTest {
 
     @Test
     public void pointClick_occured_eventIsFired() {
-        skipBrowser("Uses VML for rendering, selectors won't work", Browser.IE8);
         openTestUI();
 
         WebElement treeMapDataPoint = findTreeMapDataPoint();
@@ -57,7 +55,7 @@ public class TreeMapPointClickTBTest extends AbstractParallelTest {
 
     private void click(WebElement secondCheckBox) {
         new Actions(driver).click(secondCheckBox).build().perform();
-        getTestBenchCommandExecutor().waitForVaadin();
+        waitForVaadin();
     }
 
 }

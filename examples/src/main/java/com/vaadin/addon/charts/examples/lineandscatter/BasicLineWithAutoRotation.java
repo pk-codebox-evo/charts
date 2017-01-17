@@ -7,8 +7,6 @@ import com.vaadin.addon.charts.model.ChartType;
 import com.vaadin.addon.charts.model.Configuration;
 import com.vaadin.addon.charts.model.ListSeries;
 import com.vaadin.addon.charts.model.XAxis;
-import com.vaadin.data.Property.ValueChangeEvent;
-import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Component;
@@ -26,6 +24,8 @@ public class BasicLineWithAutoRotation extends AbstractVaadinChartExample {
     @Override
     protected Component getChart() {
         VerticalLayout layout = new VerticalLayout();
+        layout.setSpacing(false);
+        layout.setMargin(false);
         final Chart chart = new Chart(ChartType.LINE);
         chart.setHeight("400px");
         chart.setWidth("100%");
@@ -67,13 +67,9 @@ public class BasicLineWithAutoRotation extends AbstractVaadinChartExample {
                     }
                 }));
 
-        slider.addValueChangeListener(new ValueChangeListener() {
-            @Override
-            public void valueChange(ValueChangeEvent event) {
+        slider.addValueChangeListener(event -> {
                 double newValue = slider.getValue();
                 chart.setWidth((float) newValue, Unit.PERCENTAGE);
-
-            }
         });
 
         return layout;

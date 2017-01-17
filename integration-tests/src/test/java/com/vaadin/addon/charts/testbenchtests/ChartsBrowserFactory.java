@@ -14,16 +14,13 @@ public class ChartsBrowserFactory extends DefaultBrowserFactory {
     @Override
     public DesiredCapabilities create(Browser browser) {
         switch (browser) {
-        case IE8:
-            return createIE(browser, "8");
-        case IE9:
-            return createIE(browser, "9");
-        case IE10:
-            return createIE(browser, "10");
         case IE11:
             return createIE(browser, "11");
         case PHANTOMJS:
-            return create(browser, "1", Platform.LINUX);
+            DesiredCapabilities phantom2 = create(browser, "2", Platform.LINUX);
+            // Hack for the test cluster
+            phantom2.setCapability("phantomjs.binary.path", "/usr/bin/phantomjs2");
+            return phantom2;
         case CHROME:
             return create(browser, "40", Platform.VISTA);
         case FIREFOX:

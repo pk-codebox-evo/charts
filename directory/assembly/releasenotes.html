@@ -499,24 +499,28 @@
     <p>Vaadin Charts is an add-on for Vaadin Framework. It provides advanced charting functionality for any
        mobile or desktop Vaadin application.</p>
 
-    <h2 id="overview_since_3x">Overview of changes in 3.1</h2>
+    <h2 id="overview_since_3x">Overview of changes in 4.0</h2>
 
     <ul>
-        <li>Fix a problem with setting a margin for a chart title.</li>
-        <li>Fix a problem with a chart click event and a point click event. See <a href="https://dev.vaadin.com/ticket/19745">#19745</a></li>
-        <li>Fix a javadoc for a Lang.setNumericValues method.</li>
-        <li>Fix getters for multivalued properties. Before if the property value was not set, the getter raised an exception.</li>
-        <li>Add Angular2 support for Web Components version.</li>
-        <li>Fix a typo in SVGGenerator API: withHeigth -> withHeight</li>
+        <li>Added Vaadin 8 and Java 8 support.</li>
+        <li>Dropped support for Angular2.</li>
+        <li>Dropped support for React.</li>
+    </ul>
+    
+        
+    <h3 id="api_review_3x">Java API Review for 4.0</h3>
+
+    <ul>
+        <li>Added DataProviderSeries class, that replaces ContainerDataSeries.</li>
+        <li>Methods that used java.util.Date are marked as deprecated, use Java 8 java.time.Instant instead.</li>
     </ul>
 
-    <!-- No trac ticket to include at the moment
         <table>
             <tbody>
-                <tr><td><a href="https://dev.vaadin.com/ticket/18552">#18552</a></td><td>NPE with deserialized chart</td></tr>
-            </tbody>
+                <!--<tr><td><a href="https://dev.vaadin.com/ticket/19845">#19845</a></td><td>DataSeriesItem color is not updated dinamically</td></tr>-->
+                </tbody>
         </table>
-    -->
+
     <h2 id="package_contents">Package Contents</h2>
 
     <p>The package contains the following files and directories:</p>
@@ -561,7 +565,7 @@
     <h2 id="dependencies">Third Party Dependencies</h2>
 
     <p>All dependencies are included in the package in the <tt>addon/lib</tt> directory.
-        Vaadin Charts 3 directly depends on the following third-party libraries:</p>
+        Vaadin Charts 4 directly depends on the following third-party libraries:</p>
 
     <ul>
         <li>Apache commons-io</li>
@@ -621,12 +625,6 @@
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>Angular 1</td>
-            </tr>
-            <tr>
-                <td>React 0.14</td>
-            </tr>
             <tr>
                 <td>Polymer 1</td>
             </tr>

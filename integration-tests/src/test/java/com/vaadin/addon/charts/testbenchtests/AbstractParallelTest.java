@@ -37,6 +37,8 @@ public abstract class AbstractParallelTest extends ParallelTest {
     private static final String REF_IMAGE_ROOT = "src/test/resources/screenshots/reference";
     protected TestBenchCommands testBench;
     protected static final String ERROR_IMAGE_ROOT = "target/testbench/errors/";
+    protected static final String HUB_NAME_PROPERTY = "com.vaadin.testbench.Parameters.hubHostname";
+    private String hubHostName;
 
     public AbstractParallelTest() {
         super();
@@ -44,6 +46,7 @@ public abstract class AbstractParallelTest extends ParallelTest {
 
     @Override
     public void setup() throws Exception {
+        hubHostName = System.getProperty(HUB_NAME_PROPERTY);
         // override local driver behaviour, so we can easily specify local
         // PhantomJS
         // with a system property
@@ -54,7 +57,6 @@ public abstract class AbstractParallelTest extends ParallelTest {
         } else {
             super.setup();
         }
-
         new File(ERROR_IMAGE_ROOT).mkdirs();
         Parameters.setScreenshotErrorDirectory(ERROR_IMAGE_ROOT);
         Parameters.setScreenshotComparisonTolerance(0.05);
@@ -71,6 +73,15 @@ public abstract class AbstractParallelTest extends ParallelTest {
         configBrowser();
     }
 
+    @Override
+    protected String getHubHostname() {
+        if (hubHostName != null) {
+            return hubHostName;
+        } else {
+            return super.getHubHostname();
+        }
+    }
+
     /**
      * Waits until the chart element has been rendered on screen. This is
      * necessary in the cases where the test grid is overloaded.
@@ -80,7 +91,7 @@ public abstract class AbstractParallelTest extends ParallelTest {
             ExpectedConditions
                 .presenceOfElementLocated(
                     com.vaadin.testbench.By.className("highcharts-container")));
-        getTestBenchCommandExecutor().waitForVaadin();
+        getCommandExecutor().waitForVaadin();
     }
 
     private boolean getBooleanProperty(String key) {
@@ -129,10 +140,7 @@ public abstract class AbstractParallelTest extends ParallelTest {
 
     @BrowserConfiguration
     public List<DesiredCapabilities> getBrowsersToTest() {
-        List<DesiredCapabilities> allBrowsers = new ArrayList<DesiredCapabilities>();
-        allBrowsers.add(Browser.IE8.getDesiredCapabilities());
-        allBrowsers.add(Browser.IE9.getDesiredCapabilities());
-        allBrowsers.add(Browser.IE10.getDesiredCapabilities());
+        List<DesiredCapabilities> allBrowsers = new ArrayList<>();
         allBrowsers.add(Browser.IE11.getDesiredCapabilities());
         allBrowsers.add(Browser.FIREFOX.getDesiredCapabilities());
         allBrowsers.add(Browser.CHROME.getDesiredCapabilities());
@@ -195,7 +203,7 @@ public abstract class AbstractParallelTest extends ParallelTest {
     }
 
     protected void waitForVaadin() {
-        getTestBenchCommandExecutor().waitForVaadin();
+        getCommandExecutor().waitForVaadin();
     }
 
     /**
@@ -245,12 +253,6 @@ public abstract class AbstractParallelTest extends ParallelTest {
         case CHROME: if(BrowserUtil.isChrome(capabilities)) { throw new BrowserSkipped(reason); }
             break;
         case SAFARI: if(BrowserUtil.isSafari(capabilities)) { throw new BrowserSkipped(reason); }
-            break;
-        case IE8: if(BrowserUtil.isIE(capabilities, 8)) { throw new BrowserSkipped(reason); }
-            break;
-        case IE9: if(BrowserUtil.isIE(capabilities, 9)) { throw new BrowserSkipped(reason); }
-            break;
-        case IE10: if(BrowserUtil.isIE(capabilities, 10)) { throw new BrowserSkipped(reason); }
             break;
         case IE11: if(BrowserUtil.isIE(capabilities, 11)) { throw new BrowserSkipped(reason); }
             break;

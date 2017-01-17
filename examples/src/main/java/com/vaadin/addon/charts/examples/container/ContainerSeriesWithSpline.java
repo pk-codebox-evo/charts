@@ -1,52 +1,64 @@
 package com.vaadin.addon.charts.examples.container;
 
-import java.util.Calendar;
-import java.util.Date;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import com.vaadin.addon.charts.Chart;
 import com.vaadin.addon.charts.examples.AbstractVaadinChartExample;
 import com.vaadin.addon.charts.examples.SkipFromDemo;
 import com.vaadin.addon.charts.model.AxisType;
 import com.vaadin.addon.charts.model.Configuration;
-import com.vaadin.addon.charts.model.ContainerDataSeries;
+import com.vaadin.addon.charts.model.DataProviderSeries;
 import com.vaadin.addon.charts.model.PlotOptionsSpline;
-import com.vaadin.data.Item;
-import com.vaadin.data.util.IndexedContainer;
+import com.vaadin.data.provider.DataProvider;
+import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.ui.Component;
 
 @SkipFromDemo
 public class ContainerSeriesWithSpline extends AbstractVaadinChartExample {
 
+    private class TestItem {
+        Instant date;
+        Integer value;
+
+        public TestItem(Instant date, Integer value) {
+            this.date = date;
+            this.value = value;
+        }
+
+        public Instant getDate() {
+            return date;
+        }
+
+        public Integer getValue() {
+            return value;
+        }
+    }
     @Override
     public String getDescription() {
-        return "Simple Chart with ContainerSeries";
+        return "Simple Chart with ChartDataSeries";
     }
 
     @Override
     protected Component getChart() {
         // Create container with two points
-        IndexedContainer indexedContainer = new IndexedContainer();
-        indexedContainer.addContainerProperty("Count", Integer.class, 0);
-        indexedContainer.addContainerProperty("Date", Date.class, new Date());
+        Collection<TestItem> col = new ArrayList<>();
+        DataProvider<TestItem, ?> ds = new ListDataProvider<>(col);
+        LocalDateTime dateTime = LocalDateTime.of(2013, 3, 22, 12, 00);
 
-        Calendar cal = Calendar.getInstance();
-        cal.set(2013, 2, 22, 12, 00);
-        cal.set(Calendar.MILLISECOND, 0);
-        cal.set(Calendar.SECOND, 0);
+        col.add(new TestItem(dateTime.toInstant(ZoneOffset.UTC), 5));
+        dateTime = dateTime.plusDays(1);
+        col.add(new TestItem(dateTime.toInstant(ZoneOffset.UTC), 10));
+        dateTime = dateTime.plusDays(1);
+        col.add(new TestItem(dateTime.toInstant(ZoneOffset.UTC), 5));
 
-        Item item = indexedContainer.addItem("p1");
-        item.getItemProperty("Date").setValue(cal.getTime());
-        item.getItemProperty("Count").setValue(5);
+        DataProviderSeries<TestItem> chartDataSeries = new DataProviderSeries<>(ds);
+        chartDataSeries.setX(TestItem::getDate);
+        chartDataSeries.setY(TestItem::getValue);
 
-        cal.add(Calendar.DATE, 1);
-        item = indexedContainer.addItem("p2");
-        item.getItemProperty("Date").setValue(cal.getTime());
-        item.getItemProperty("Count").setValue(10);
-
-        cal.add(Calendar.DATE, 1);
-        item = indexedContainer.addItem("p3");
-        item.getItemProperty("Date").setValue(cal.getTime());
-        item.getItemProperty("Count").setValue(5);
 
         // Create chart and render
         Chart chart = new Chart();
@@ -57,13 +69,11 @@ public class ContainerSeriesWithSpline extends AbstractVaadinChartExample {
         config.getxAxis().setType(AxisType.DATETIME);
 
         // Wrap container in a container data series
-        ContainerDataSeries cds = new ContainerDataSeries(indexedContainer);
-        cds.setPlotOptions(new PlotOptionsSpline());
-        cds.setYPropertyId("Count");
-        cds.setXPropertyId("Date");
+
+        chartDataSeries.setPlotOptions(new PlotOptionsSpline());
 
         // Add points to series
-        config.addSeries(cds);
+        config.addSeries(chartDataSeries);
 
         chart.setSizeFull();
         chart.drawChart(config);

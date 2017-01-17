@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import com.vaadin.server.SizeWithUnit;
 import com.vaadin.server.Sizeable.Unit;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.vaadin.addon.charts.model.serializers.SizeSerializer;
 /**
  * A pie chart is a circular chart divided into sectors, illustrating numerical
  * proportion.
@@ -30,6 +32,7 @@ public class PlotOptionsPie extends AbstractPlotOptions {
 
 	private Boolean allowPointSelect;
 	private Boolean animation;
+	private Number animationLimit;
 	private Color borderColor;
 	private Number borderWidth;
 	private String[] center;
@@ -41,6 +44,7 @@ public class PlotOptionsPie extends AbstractPlotOptions {
 	private Number endAngle;
 	private Boolean getExtremesFromAll;
 	private Boolean ignoreHiddenPoint;
+	@JsonSerialize(using = SizeSerializer.class)
 	private String innerSize;
 	private ArrayList<String> keys;
 	private String linkedTo;
@@ -48,6 +52,7 @@ public class PlotOptionsPie extends AbstractPlotOptions {
 	private Boolean selected;
 	private Boolean shadow;
 	private Boolean showInLegend;
+	@JsonSerialize(using = SizeSerializer.class)
 	private String size;
 	private Number slicedOffset;
 	private Number startAngle;
@@ -117,6 +122,24 @@ public class PlotOptionsPie extends AbstractPlotOptions {
 	 */
 	public void setAnimation(Boolean animation) {
 		this.animation = animation;
+	}
+
+	/**
+	 * @see #setAnimationLimit(Number)
+	 */
+	public Number getAnimationLimit() {
+		return animationLimit;
+	}
+
+	/**
+	 * For some series, there is a limit that shuts down initial animation by
+	 * default when the total number of points in the chart is too high. For
+	 * example, for a column chart and its derivatives, animation doesn't run if
+	 * there is more than 250 points totally. To disable this cap, set
+	 * <code>animationLimit</code> to <code>Infinity</code>.
+	 */
+	public void setAnimationLimit(Number animationLimit) {
+		this.animationLimit = animationLimit;
 	}
 
 	/**

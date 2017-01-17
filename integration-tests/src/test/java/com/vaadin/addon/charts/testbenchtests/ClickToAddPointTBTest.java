@@ -2,12 +2,9 @@ package com.vaadin.addon.charts.testbenchtests;
 
 import static org.junit.Assert.assertTrue;
 
-import java.util.List;
-
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Action;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.remote.DesiredCapabilities;
 
 import com.vaadin.addon.charts.examples.dynamic.ClickToAddPoint;
 import com.vaadin.testbench.By;
@@ -28,7 +25,7 @@ public class ClickToAddPointTBTest extends
 
     @Override
     protected void testCustomStuff() {
-        skipBrowser("Move and click action does not seem to work with Firefox and IE8", Browser.FIREFOX, Browser.IE8);
+        skipBrowser("Move and click action does not seem to work with Firefox", Browser.FIREFOX);
         WebElement findElement = driver.findElement(By.id("chart"));
         Action click = new Actions(driver).moveToElement(findElement, 200, 200)
                 .click().build();

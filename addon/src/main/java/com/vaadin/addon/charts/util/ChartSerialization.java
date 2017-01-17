@@ -25,6 +25,7 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
 import com.vaadin.addon.charts.ChartOptions;
 import com.vaadin.addon.charts.model.AbstractConfigurationObject;
 import com.vaadin.addon.charts.model.serializers.AxisListSerializer;
@@ -33,6 +34,7 @@ import com.vaadin.addon.charts.model.serializers.ChartOptionsBeanSerializerModif
 import com.vaadin.addon.charts.model.serializers.DateSerializer;
 import com.vaadin.addon.charts.model.serializers.DefaultBeanSerializerModifier;
 import com.vaadin.addon.charts.model.serializers.GradientColorStopsSerializer;
+import com.vaadin.addon.charts.model.serializers.InstantSerializer;
 import com.vaadin.addon.charts.model.serializers.PaneListSerializer;
 import com.vaadin.addon.charts.model.serializers.SolidColorSerializer;
 import com.vaadin.addon.charts.model.serializers.StopSerializer;
@@ -62,6 +64,12 @@ public class ChartSerialization implements Serializable {
      * Create the default {@link ObjectMapper} used for serialization.
      */
     public static ObjectMapper createObjectMapper() {
+        // serializer modifier used when basic serializer isn't enough
+        return createObjectMapper(new DefaultBeanSerializerModifier());
+    }
+
+    public static ObjectMapper createObjectMapper(
+            BeanSerializerModifier modifier) {
         ObjectMapper mapper = new ObjectMapper()
                 .setSerializationInclusion(JsonInclude.Include.NON_NULL)
                 .setVisibility(PropertyAccessor.ALL, Visibility.NONE)
@@ -74,11 +82,12 @@ public class ChartSerialization implements Serializable {
                 .registerModule(GradientColorStopsSerializer.getModule())
                 .registerModule(AxisListSerializer.getModule())
                 .registerModule(PaneListSerializer.getModule())
-                .registerModule(DateSerializer.getModule());
+                .registerModule(DateSerializer.getModule())
+                .registerModule(InstantSerializer.getModule());
 
         // serializer modifier used when basic serializer isn't enough
         return mapper.setSerializerFactory(mapper.getSerializerFactory()
-                .withSerializerModifier(new DefaultBeanSerializerModifier()));
+                .withSerializerModifier(modifier));
     }
 
     /**
